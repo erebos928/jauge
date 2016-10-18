@@ -31,6 +31,7 @@ namespace WindowsFormsControlLibrary1
         private int _divisionCount = 5;
         private int _maxValue = 100;
         private int _minValue = 0;
+        int arcCorner,arcDiameter;
         public int MinValue { get {
                 return _minValue;
             } set {
@@ -89,116 +90,46 @@ namespace WindowsFormsControlLibrary1
         }
         protected override void OnPaint(PaintEventArgs e)
         {
-            //base.OnPaint(e);
-            int qq = (int)(0.3 * Width);
-            int rr = Height - 2 * qq;
-            if (region != null)
-                DrawNeedle(e.Graphics, rr / 2 - Width / 56);
-            SetPreferedSize();
+            arcCorner = (int)(0.3 * Width);
+            arcDiameter = Height - 2 * arcCorner;
+            //sets width and height equal
+            SetSquare();
+            // sets hight quality of drawing
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // checks if there is an invalidated region. If so just update the needle
+            if (region != null)
+                DrawNeedle(e.Graphics, arcDiameter / 2 - Width / 56);
+
             // the outer circle posed in 0.1 of the side of this control
-            int p = (int)(0.1 * Height);
-            System.Drawing.Drawing2D.LinearGradientBrush brush = new System.Drawing.Drawing2D.LinearGradientBrush(
-                new Point(p, p), new Point(Width - p , Height - p ), outerCircleColor1,
-                outerCircleColor2);
-            Pen pen = new Pen(brush);
-            //rectangle that the circle in which will be drawn 
-            Rectangle rect = GetRectangle(p);
-            e.Graphics.DrawEllipse(pen, rect);
-            brush = new System.Drawing.Drawing2D.LinearGradientBrush(new Point(p, p), 
-                new Point(Height - p, Height - p), biggestCircleFillColor1, 
-                biggestCircleFillColor2);
-            e.Graphics.FillEllipse(brush, rect);
-            // the corner of thicker inner circle.
-            int a = (int)(0.12 * Width);
-            Rectangle rect2 = GetRectangle(a);
-
-            // setting gradiant colors between upper left corner and lower right corner of the circle
-            brush = new System.Drawing.Drawing2D.LinearGradientBrush(
-                new Point(a, a), new Point(Height - a, Height - a), innerThickCircleColor1,
-                innerThickCircleColor2);
-            pen = new Pen(brush);
-            pen.Width = Width/34;
-            e.Graphics.DrawArc(pen, rect2, 0, 360);
+            DrawOuterCircle(e.Graphics);
+            // draw thicker circle
+            DrawThickCircle(e.Graphics);
             //arc
-
-            brush = new System.Drawing.Drawing2D.LinearGradientBrush(
-                new Point(a, a), new Point(Height - a, Height - a), innerArcColor,
-                innerArcColor);
-            pen = new Pen(brush);
-            pen.Width = Width / 28;
-            //the corner of the arc
-            p = (int)(0.3 * Width);
-            rect = GetRectangle(p);
-            // from 135 degree by amount of 270
-            e.Graphics.DrawArc(pen, rect, 135, 270);
+            DrawInnerArc(e.Graphics);
             // draw divisions
-            //h is the diameter of the circle
-            int h = Height - 2 * p;
-            pen.Color = divisionColor;
-            pen.Width = 1;
-            // the first division is on +45 degrees. this is the base
-            double teta = Math.PI / 4;
-            // the offset depends on division count
-            double delta = (-3 * Math.PI / 2)/DivisionCount;
-            
-            //polar point with angle teta and magnitude . Pen width is Width/28
-            PolarPoint pp1 = new PolarPoint(h/2 - Width/56, teta);
-            PolarPoint pp2 = new PolarPoint(h/2 + Width/56, teta);
-            for (int i = 0;i<= DivisionCount; i++)
-            {
-                DrawLine(pp1, pp2, new Point(p + h / 2, p + h / 2), e.Graphics, pen);
-                pp1.Rotate(delta);
-                pp2.Rotate(delta);
-            }
-            // draws two narrow arcs around the thick arc
-            pen.Color = Color.FromArgb(255, 175, 183, 231);
-            int u = p - (int)Width / 56 ;
-            rect = GetRectangle(u);
-            e.Graphics.DrawArc(pen, rect, 135, 270);
-            u = p + (int)Width / 56;
-            rect = GetRectangle(u);
-            e.Graphics.DrawArc(pen, rect, 135, 270);
+            DrawDivisions(e.Graphics);
             // print digits
-            int fontSize = (int)Width / 35;
-            Font fnt = new Font("Tahoma", fontSize,FontStyle.Bold);
-            pp2.Phase = Math.PI / 4;
-            pp2.Magnitude += (int)Width / 18;
-            Size size = new Size(4*fontSize, 2*fontSize);
-            // offset
-            delta = -(3 * Math.PI / 2) / DivisionCount;
-            int interval = (MaxValue - MinValue) / DivisionCount;
-            Brush brsh = new SolidBrush(digitColor);
-            StringFormat format = new StringFormat();
-            format.Alignment = StringAlignment.Center;
-            
-            for (int i = 0; i <= DivisionCount; i++)
-            {
-                int Digit = MaxValue - i * interval;
-                e.Graphics.DrawString(Digit.ToString(), fnt, brsh, CreateRectangle(pp2, size),format);
-                e.Graphics.DrawRectangle(pen, CreateRectangle(pp2, size));
-                pp2.Rotate(delta);
-            }
-
-
-            DrawNeedle(e.Graphics, h / 2 - Width/56);
+            DrawDigits(e.Graphics);
+            //draw the needle
+            DrawNeedle(e.Graphics, arcDiameter / 2 );
         }
-        //return the rectangle whose corner resides at distance of margin from the corner of this control
+        //return the rectangle whose corner resides at distance of margin from the corner of the control
         private Rectangle GetRectangle(int margin)
         {
             return new Rectangle(margin, margin, Width - 2 * margin, Width - 2 * margin);
         }
        void DrawNeedle(Graphics g,int r)
         {
+            int arcThickness = Width / 28;
             GraphicsPath path = new GraphicsPath();
             // draw semicircle
             int penWidth = Width / 112;
             int radius = Width / 28;
-            int x = penWidth * r / radius;
+            //draws the needle's semi circle (its base). will be drawn in path parameter
             DrawArc(radius,90, 180,path);
-            //int l = (int)Math.Sqrt( h * h - radius * radius);
-            path.AddLine(Width / 2, Height / 2 - radius, (Width / 2) + r -x, Height / 2);
-            path.AddLine(Width / 2, Height / 2 + radius, (Width / 2) + r - x, Height / 2);
+            
+            path.AddLine(Width / 2, Height / 2 - radius, (Width / 2) + r - arcThickness, Height / 2);
+            path.AddLine(Width / 2, Height / 2 + radius, (Width / 2) + r - arcThickness, Height / 2);
             // making a region to invalidate
             GraphicsPath pth = new GraphicsPath();
             DrawArc( r, 0, 360,pth);
@@ -209,6 +140,7 @@ namespace WindowsFormsControlLibrary1
             W.Translate(-Width / 2, -Height / 2);
             W.Rotate(omega,MatrixOrder.Append);
             W.Translate(Width / 2, Height / 2, MatrixOrder.Append);
+            //center is the start for brush
             Point center = new Point(Width / 2 - Width/28 - 4, Height / 2);
             Point extrem = new Point(Width / 2 + r, Height / 2);
             Point[] points = new Point[2] { center, extrem };
@@ -216,6 +148,7 @@ namespace WindowsFormsControlLibrary1
             LinearGradientBrush lgb = new LinearGradientBrush(points[0], points[1], needleBorderColor1, needleBorderColor2);
             path.Transform(W);
             Pen pen = new Pen(lgb);
+            pen.Alignment = PenAlignment.Inset;
             region.Transform(W);
             pen.Width = penWidth;
             g.DrawPath(pen,path);
@@ -232,6 +165,102 @@ namespace WindowsFormsControlLibrary1
             float ratio = (float)(CurrentValue - MinValue) / (MaxValue - MinValue);
             return 135 + ratio * 270;
         }
+        void DrawOuterCircle(Graphics g)
+        {
+            int p = (int)(0.1 * Height);
+            System.Drawing.Drawing2D.LinearGradientBrush brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                new Point(p, p), new Point(Width - p, Height - p), outerCircleColor1,
+                outerCircleColor2);
+            Pen pen = new Pen(brush);
+            //rectangle that  in which the circle will be drawn 
+            Rectangle rect = GetRectangle(p);
+            g.DrawEllipse(pen, rect);
+            brush = new System.Drawing.Drawing2D.LinearGradientBrush(new Point(p, p),
+                new Point(Height - p, Height - p), biggestCircleFillColor1,
+                biggestCircleFillColor2);
+            g.FillEllipse(brush, rect);
+
+        }
+        void DrawDivisions(Graphics g)
+        {
+            //h is the diameter of the circle. diameter is calculated from the center of the gauge to the center of the arc
+            Pen pen = new Pen(divisionColor, 1);
+            // the first division is on +45 degrees. this is the base
+            double teta = Math.PI / 4;
+            // the offset depends on division count
+            double delta = (-3 * Math.PI / 2) / DivisionCount;
+
+            //polar point with angle teta and magnitude . Pen width is Width/28
+            PolarPoint pp1 = new PolarPoint( arcDiameter/ 2 - Width / 56, teta);
+            PolarPoint pp2 = new PolarPoint(arcDiameter / 2 + Width / 56, teta);
+            for (int i = 0; i <= DivisionCount; i++)
+            {
+                DrawLine(pp1, pp2, new Point(Width/2, Height/2), g, pen);
+                pp1.Rotate(delta);
+                pp2.Rotate(delta);
+            }
+
+        }
+        void DrawDigits(Graphics g)
+        {
+            int fontSize = (int)Width / 35;
+            Font fnt = new Font("Tahoma", fontSize, FontStyle.Bold);
+            PolarPoint pp = new PolarPoint();
+            pp.Phase = Math.PI / 4;
+            pp.Magnitude = arcDiameter/2 + (int)Width / 18;
+            Size size = new Size(4 * fontSize, 2 * fontSize);
+            // offset
+            double delta = -(3 * Math.PI / 2) / DivisionCount;
+            int interval = (MaxValue - MinValue) / DivisionCount;
+            Brush brsh = new SolidBrush(digitColor);
+            StringFormat format = new StringFormat();
+            format.Alignment = StringAlignment.Center;
+
+            for (int i = 0; i <= DivisionCount; i++)
+            {
+                int Digit = MaxValue - i * interval;
+                g.DrawString(Digit.ToString(), fnt, brsh, CreateRectangle(pp, size), format);
+                pp.Rotate(delta);
+            }
+
+        }
+        void DrawThickCircle(Graphics g)
+        {
+            //the corner is on 0.12 of the corner of the control
+            int a = (int)(0.12 * Width);
+            Rectangle rect2 = GetRectangle(a);
+
+            // setting gradiant colors between upper left corner and lower right corner of the thick circle
+            Brush brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                new Point(a, a), new Point(Height - a, Height - a), innerThickCircleColor1,
+                innerThickCircleColor2);
+            Pen pen = new Pen(brush);
+            pen.Width = Width / 34;
+            g.DrawArc(pen, rect2, 0, 360);
+
+        }
+        void DrawInnerArc(Graphics g)
+        {
+            //the corner of the arc
+            int p = (int)(0.3 * Width);
+            Pen pen = new Pen(innerArcColor);
+            pen.Width = Width / 28;
+          
+            Rectangle rect = GetRectangle(p);
+            // from 135 degree by amount of 270
+            g.DrawArc(pen, rect, 135, 270);
+            // draws two narrow arcs around the thick arc
+            pen.Width = 1;
+            pen.Color = Color.FromArgb(255, 175, 183, 231);
+            int u = p - (int)Width / 56;
+            rect = GetRectangle(u);
+            g.DrawArc(pen, rect, 135, 270);
+            u = p + (int)Width / 56;
+            rect = GetRectangle(u);
+            g.DrawArc(pen, rect, 135, 270);
+
+
+        }
         Rectangle CreateRectangle(PolarPoint pp,Size size)
         {
             // create a rectangle with size and the center on pp
@@ -240,14 +269,6 @@ namespace WindowsFormsControlLibrary1
             // Transport to the center of coordination i.e. Height/2 and Width/2
             // A , B shows the translate necessary to move CartPoint to center (Width/2,Height/2)
 
-            /* int A = Width / 2 - CartPoint.X;
-             int B = Height / 2 - CartPoint.Y;
-             Point Corner = new Point();
-             Corner.X = Width / 2 - size.Width/2;
-             Corner.Y = Height / 2 + size.Height /2;
-             // inverse translate
-             Corner.X = Corner.X - A;
-             Corner.Y = Corner.Y - B;*/
             CartPoint.X = CartPoint.X - size.Width/2;
             CartPoint.Y = CartPoint.Y - size.Height/2;
             return new Rectangle(CartPoint, size);
@@ -302,8 +323,8 @@ namespace WindowsFormsControlLibrary1
             path.AddArc(new Rectangle(x, y, Radius * 2, Radius * 2), From, To);
             
         }
-        // makes them equal
-        private void SetPreferedSize()
+        // makes width and height equal
+        private void SetSquare()
         {
             if (Height != Width)
                 if (Height > Width)
