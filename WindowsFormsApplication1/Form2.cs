@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,21 +16,36 @@ namespace WindowsFormsApplication1
     public partial class Form2 : Form
     {
         String filename;
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
+        delegate void Ts();
         public Form2()
         {
             InitializeComponent();
+            ValueChanged += value_Changed;
         }
-
+        public void value_Changed(Object sender, ValueChangedEventArgs args)
+        {
+             circularGauge_71.CurrentValue = args.Value;
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
             filename = openFileDialog1.FileName;
+            openFileDialog1.Reset();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            FileStream stream = new FileStream(filename,FileMode.Open);
+            
+            button2.Enabled = false;
+            Action act = new Action(GenerateValues);
+            Task.Factory.StartNew(act);
+            button2.Enabled = true;
 
+        }
+        void GenerateValues()
+        {
+            FileStream stream = new FileStream(filename, FileMode.Open);
             /*
             WebRequest req = WebRequest.Create(@"https://onedrive.live.com/download?cid=AAA36CBF75CC15B8&resid=AAA36CBF75CC15B8%21161&authkey=AC10x1BgbWUm5dw");
             WebResponse response = req.GetResponse() ;
@@ -50,12 +66,13 @@ namespace WindowsFormsApplication1
             {
                 double result;
                 double.TryParse(element, out result);
-                circularGauge_71.CurrentValue = result;
+                ValueChangedEventArgs args = new ValueChangedEventArgs(result);
+                Control targetForm = ValueChanged.Target as System.Windows.Forms.Control;
+                targetForm.Invoke(ValueChanged, new object[] { this,args });
                 System.Threading.Thread.Sleep(70);
             }
 
         }
 
-    
-}
+    }
 }
