@@ -96,10 +96,7 @@ namespace WindowsFormsControlLibrary1
             SetSquare();
             // sets hight quality of drawing
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            // checks if there is an invalidated region. If so just update the needle
-            if (region != null)
-                DrawNeedle(e.Graphics, arcDiameter / 2 - Width / 56);
-
+        
             // the outer circle posed in 0.1 of the side of this control
             DrawOuterCircle(e.Graphics);
             // draw thicker circle
