@@ -98,7 +98,8 @@ namespace WindowsFormsControlLibrary1
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             // checks if there is an invalidated region. If so just update the needle
             if (region != null)
-                DrawNeedle(e.Graphics, arcDiameter / 2 - Width / 56);
+               DrawNeedle(e.Graphics, arcDiameter / 2 - Width / 56);
+            
 
             // the outer circle posed in 0.1 of the side of this control
             DrawOuterCircle(e.Graphics);
@@ -134,13 +135,17 @@ namespace WindowsFormsControlLibrary1
             GraphicsPath pth = new GraphicsPath();
             DrawArc( r, 0, 360,pth);
             region = new Region(pth);
-            //g.DrawPath(Pens.Black, path);
+            
+            //converts current value to its equivalent in degree  
             float omega = GetCurrentValueDegree();
             Matrix W = new Matrix();
+            //transporting the needle to point (0,0) the origin 
             W.Translate(-Width / 2, -Height / 2);
+            //rotation with amount of omega
             W.Rotate(omega,MatrixOrder.Append);
+            //returning the needle to the center of the control
             W.Translate(Width / 2, Height / 2, MatrixOrder.Append);
-            //center is the start for brush
+            //gradient brush
             Point center = new Point(Width / 2 - Width/28 - 4, Height / 2);
             Point extrem = new Point(Width / 2 + r, Height / 2);
             Point[] points = new Point[2] { center, extrem };
@@ -149,7 +154,7 @@ namespace WindowsFormsControlLibrary1
             path.Transform(W);
             Pen pen = new Pen(lgb);
             pen.Alignment = PenAlignment.Inset;
-            region.Transform(W);
+            //region.Transform(W);
             pen.Width = penWidth;
             g.DrawPath(pen,path);
             lgb = new LinearGradientBrush(points[0], points[1], needleColor1, needleColor2);

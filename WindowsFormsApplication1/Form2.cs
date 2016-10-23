@@ -69,7 +69,7 @@ namespace WindowsFormsApplication1
                 ValueChangedEventArgs args = new ValueChangedEventArgs(result);
                 Control targetForm = ValueChanged.Target as System.Windows.Forms.Control;
                 targetForm.Invoke(ValueChanged, new object[] { this,args });
-                System.Threading.Thread.Sleep(70);
+                System.Threading.Thread.Sleep(7);
             }
 
         }

@@ -31,8 +31,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
-            this.circularGauge_71 = new WindowsFormsControlLibrary1.CircularGauge_7();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.circularGauge_71 = new WindowsFormsControlLibrary1.CircularGauge_7();
             this.SuspendLayout();
             // 
             // button1
@@ -59,6 +59,14 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(937, 150);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 3;
+            // 
             // circularGauge_71
             // 
             this.circularGauge_71.CurrentValue = 0D;
@@ -69,14 +77,6 @@
             this.circularGauge_71.Name = "circularGauge_71";
             this.circularGauge_71.Size = new System.Drawing.Size(653, 653);
             this.circularGauge_71.TabIndex = 0;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(937, 150);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 3;
             // 
             // Form2
             // 
@@ -94,11 +94,10 @@
         }
 
         #endregion
-
-        private WindowsFormsControlLibrary1.CircularGauge_7 circularGauge_71;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ComboBox comboBox1;
+        private WindowsFormsControlLibrary1.CircularGauge_7 circularGauge_71;
     }
 }
