@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsControlLibrary1
+﻿namespace Indicator
 {
     partial class CircularGauge_7
     {

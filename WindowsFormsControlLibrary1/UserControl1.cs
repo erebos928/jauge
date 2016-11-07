@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
-namespace WindowsFormsControlLibrary1
+namespace Indicator
 {
     public partial class CircularGauge_7: UserControl
     {
@@ -35,7 +35,7 @@ namespace WindowsFormsControlLibrary1
         public int MinValue { get {
                 return _minValue;
             } set {
-                if ((value < 0) || (value > _maxValue))
+                if (value > _maxValue)
                     throw new ArgumentException("Invalid value");
                 _minValue = value;
             } } 

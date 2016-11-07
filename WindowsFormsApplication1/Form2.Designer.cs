@@ -31,7 +31,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
-            this.circularGauge_71 = new WindowsFormsControlLibrary1.CircularGauge_7();
+            this.circularGauge_71 = new Indicator.CircularGauge_7();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.button3 = new System.Windows.Forms.Button();
@@ -122,7 +122,7 @@
 
         #endregion
 
-        private WindowsFormsControlLibrary1.CircularGauge_7 circularGauge_71;
+        private Indicator.CircularGauge_7 circularGauge_71;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button2;

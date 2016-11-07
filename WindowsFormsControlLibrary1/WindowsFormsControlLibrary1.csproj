@@ -7,8 +7,8 @@
     <ProjectGuid>{9B203A59-7893-4E5F-BCC3-54FA27205593}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WindowsFormsControlLibrary1</RootNamespace>
-    <AssemblyName>WindowsFormsControlLibrary1</AssemblyName>
+    <RootNamespace>Indicator</RootNamespace>
+    <AssemblyName>circulargauge</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
